@@ -18,16 +18,20 @@ func NewUserStorage(db *sql.DB) UserStorage {
 	}
 }
 
-func (c *userStorage) Create(m *model.User) error {
-	_, err := c.db.Exec(`INSERT INTO user (name, sername) VALUES (?, ?)`, m.Name, m.Surname)
+func (c *userStorage) Create(m *model.User) (int, error) {
+	result, err := c.db.Exec(`INSERT INTO user (name, sername) VALUES (?, ?) RETURNING id`, m.Name, m.Surname)
+
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return 0, errors.New("insert error")
 	}
-	return nil
+	res, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(res), nil
 }
 
-func (c *userStorage) ReadOne(id string) (model.User, error) {
+func (c *userStorage) ReadOne(id int) (model.User, error) {
 	rows, err := c.db.Query(`SELECT user.id, user.name, user.sername
 	FROM user WHERE user.id=?`, id)
 	var a model.User
@@ -52,8 +56,8 @@ func (c *userStorage) ReadOne(id string) (model.User, error) {
 	return a, nil
 }
 
-func (c *userStorage) Update(m *model.User, id int) error {
-	fmt.Println(m)
+func (c *userStorage) Update(m *model.UpdateU, id int) error {
+
 	_, err := c.db.Exec(`UPDATE user SET name=?, sername=? WHERE user.id = ?`, m.Name, m.Surname, id)
 	if err != nil {
 		fmt.Println(err)

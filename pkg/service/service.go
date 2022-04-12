@@ -5,10 +5,12 @@ import (
 	"tidy/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type UserService interface {
-	Create(m *model.User) error
+	Create(m *model.User) (int, error)
 	ReadOne(id string) (model.User, error)
-	Update(m *model.User, id string) error
+	Update(m *model.UpdateU, id string) error
 	Delete(m string) error
 }
 
@@ -24,11 +26,16 @@ type CounterService interface {
 	SubCounter(num string) error
 	GetCounter() (string, error)
 }
+type HashCalcService interface {
+	GetID() (string, error)
+	GetHash(s string) (string, error)
+}
 type Service struct {
 	UserService
 	SubstringService
 	CounterService
 	EmailCheckService
+	HashCalcService
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -37,5 +44,6 @@ func NewService(repos *repository.Repository) *Service {
 		SubstringService:  NewSubService(),
 		CounterService:    NewCounterService(repos.CounterStorage),
 		EmailCheckService: NewEmailService(),
+		HashCalcService:   NewHashService(),
 	}
 }

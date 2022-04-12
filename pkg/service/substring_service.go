@@ -14,16 +14,17 @@ func NewSubService() *serviceSub {
 
 func (s *serviceSub) MaxLength(sub *string) (string, error) {
 
-	arr := make(map[string]int)
+	arr := make(map[rune]int)
 	res := ""
 	for j, i := range *sub {
 		if i >= 48 && i <= 57 || i >= 65 && i <= 90 || i >= 97 && i <= 122 {
-			_, prs := arr[string(i)]
+			_, prs := arr[rune(i)]
 			if prs != true {
-				arr[string(i)] = j
+				arr[rune(i)] = j
 				res += string(i)
 			}
 		} else {
+
 			return "", errors.New("bad req")
 		}
 	}

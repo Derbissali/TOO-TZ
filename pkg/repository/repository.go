@@ -10,9 +10,9 @@ type EmailCheckStorage interface {
 type SubstringStorage interface {
 }
 type UserStorage interface {
-	Create(m *model.User) error
-	ReadOne(id string) (model.User, error)
-	Update(m *model.User, id int) error
+	Create(m *model.User) (int, error)
+	ReadOne(id int) (model.User, error)
+	Update(m *model.UpdateU, id int) error
 	Delete(id int) error
 }
 type CounterStorage interface {

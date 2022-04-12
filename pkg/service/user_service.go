@@ -17,17 +17,21 @@ func NewUserService(storage repository.UserStorage) *UserServ {
 	}
 }
 
-func (s *UserServ) Create(m *model.User) error {
-	err := s.storage.Create(m)
+func (s *UserServ) Create(m *model.User) (int, error) {
+	id, err := s.storage.Create(m)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 func (s *UserServ) ReadOne(id string) (model.User, error) {
-	m, err := s.storage.ReadOne(id)
+	id1, err := strconv.Atoi(id)
+	if err != nil {
+		return model.User{}, err
+	}
+	m, err := s.storage.ReadOne(id1)
 	if err != nil {
 
 		return m, err
@@ -40,7 +44,7 @@ func (s *UserServ) ReadOne(id string) (model.User, error) {
 
 	return m, nil
 }
-func (s *UserServ) Update(m *model.User, id string) error {
+func (s *UserServ) Update(m *model.UpdateU, id string) error {
 	id1, err := strconv.Atoi(id)
 	if err != nil {
 		return err

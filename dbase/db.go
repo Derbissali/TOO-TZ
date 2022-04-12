@@ -1,19 +1,18 @@
 package dbase
 
 import (
-	"context"
 	"database/sql"
 	"log"
 	"os"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Database struct {
 	DbSql *sql.DB
-	DbRed *redis.Client
+	DbRed redis.Cmdable
 }
 
 func CheckDB() Database {
@@ -28,7 +27,6 @@ func CheckDB() Database {
 	return d
 }
 func CreateRedis() (*redis.Client, error) {
-	ctx := context.Background()
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -36,7 +34,7 @@ func CreateRedis() (*redis.Client, error) {
 		DB:       0,  // use default DB
 	})
 
-	err := rdb.Set(ctx, "counter", 0, 0).Err()
+	err := rdb.Set("counter", 0, 0).Err()
 	if err != nil {
 		panic(err)
 	}
